@@ -67,8 +67,4 @@ add_executable(hyprshutdown ${SRCFILES})
 
 target_link_libraries(hyprshutdown PkgConfig::deps glaze::glaze)
 
-install(
-  FILES contrib/hyprshutdown.desktop
-  DESTINATION "share/applications")
-
 install(TARGETS hyprshutdown)
