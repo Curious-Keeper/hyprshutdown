@@ -54,6 +54,7 @@ CMonitorState::CMonitorState(SP<Hyprtoolkit::IOutput> output) : m_monitorName(ou
                    ->layer(3)
                    ->preferredSize({0, 0})
                    ->exclusiveZone(-1)
+                   ->appClass("hyprshutdown")
                    ->commence();
 
     m_bg = Hyprtoolkit::CRectangleBuilder::begin()
