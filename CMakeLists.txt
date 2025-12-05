@@ -24,7 +24,7 @@ pkg_check_modules(
   REQUIRED
   IMPORTED_TARGET
   hyprtoolkit
-  hyprutils>=0.10.4
+  hyprutils>=0.11.0
   pixman-1
   libdrm
 )
