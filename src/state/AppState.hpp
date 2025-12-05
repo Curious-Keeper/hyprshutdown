@@ -10,7 +10,7 @@
 namespace State {
     class CApp {
       public:
-        CApp(glz::generic& object);
+        CApp(glz::generic::object_t& object);
         ~CApp() = default;
 
         CApp(const CApp&) = delete;
