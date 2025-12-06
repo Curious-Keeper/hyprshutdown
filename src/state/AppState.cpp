@@ -32,7 +32,7 @@ void CApp::quit() {
     if (!m_address.empty() || m_pid <= 0) {
         // for apps that have an address, use closewindow. Some apps don't ask for saving on SIGTERM
         g_logger->log(LOG_TRACE, "CApp::quit: using close for {}", m_class);
-        auto ret = HyprlandIPC::getFromSocket(std::format("/dispatch closewindow address:{}", m_class));
+        auto ret = HyprlandIPC::getFromSocket(std::format("/dispatch closewindow address:{}", m_address));
         if (!ret)
             g_logger->log(LOG_ERR, "Failed closing window {}: ipc err", m_class);
 
