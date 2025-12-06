@@ -26,8 +26,9 @@ namespace State {
         std::string m_address;
         std::string m_title;
         std::string m_class;
-        int64_t     m_pid      = -1;
-        bool        m_xwayland = false;
+        int64_t     m_pid          = -1;
+        bool        m_xwayland     = false;
+        bool        m_alwaysUsePid = false;
     };
 
     class CAppState {

@@ -20,8 +20,10 @@ CApp::CApp(glz::generic::object_t& object) {
         m_title = object["title"].get_string();
     if (object.contains("class"))
         m_class = object["class"].get_string();
-    if (object.contains("namespace"))
-        m_class = object["namespace"].get_string();
+    if (object.contains("namespace")) {
+        m_class        = object["namespace"].get_string();
+        m_alwaysUsePid = true; // layers cant be closewindow'd
+    }
     if (object.contains("xwayland"))
         m_xwayland = object["xwayland"].get_boolean();
     if (object.contains("pid"))
@@ -29,7 +31,7 @@ CApp::CApp(glz::generic::object_t& object) {
 }
 
 void CApp::quit() {
-    if (!m_address.empty() || m_pid <= 0) {
+    if (!m_alwaysUsePid && (!m_address.empty() || m_pid <= 0)) {
         // for apps that have an address, use closewindow. Some apps don't ask for saving on SIGTERM
         g_logger->log(LOG_TRACE, "CApp::quit: using close for {}", m_class);
         auto ret = HyprlandIPC::getFromSocket(std::format("/dispatch closewindow address:{}", m_address));
