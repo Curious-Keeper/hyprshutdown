@@ -172,26 +172,28 @@ bool CAppState::updateState() {
     std::erase_if(m_apps, [&table](const auto& e) { return !e->appAlive() && !std::ranges::any_of(table, [&e](const auto& te) { return te == *e; }); });
 
     // check PIDs
-    for (const auto& app : m_apps) {
-        if (!app->appAlive() || app->m_pid <= 0 || std::ranges::contains(m_pidsTermedNoWindows, app->m_pid))
-            continue;
+    if (!m_dryRun) {
+        for (const auto& app : m_apps) {
+            if (!app->appAlive() || app->m_pid <= 0 || app->m_address.empty() /* not a window */ || std::ranges::contains(m_pidsTermedNoWindows, app->m_pid))
+                continue;
 
-        const bool HAS_ANY_WINDOWS = std::ranges::any_of(table, [&app](const auto& te) {
-            if (!te.contains("pid"))
-                return false;
+            const bool HAS_ANY_WINDOWS = std::ranges::any_of(table, [&app](const auto& te) {
+                if (!te.contains("pid"))
+                    return false;
 
-            return sc<int>(te["pid"].get_number()) == app->m_pid;
-        });
+                return sc<int>(te["pid"].get_number()) == app->m_pid;
+            });
 
-        if (HAS_ANY_WINDOWS)
-            continue;
+            if (HAS_ANY_WINDOWS)
+                continue;
 
-        // app has no windows, but is alive. Send a SIGTERM.
-        // TODO: maybe make this also repeat every 5s or so?
-        m_pidsTermedNoWindows.emplace_back(app->m_pid);
+            // app has no windows, but is alive. Send a SIGTERM.
+            // TODO: maybe make this also repeat every 5s or so?
+            m_pidsTermedNoWindows.emplace_back(app->m_pid);
 
-        g_logger->log(LOG_DEBUG, "App {} with pid {} window was closed, but pid is alive. Sending SIGTERM.", app->m_class, app->m_pid);
-        kill(app->m_pid, SIGTERM);
+            g_logger->log(LOG_DEBUG, "App {} with pid {} window was closed, but pid is alive. Sending SIGTERM.", app->m_class, app->m_pid);
+            kill(app->m_pid, SIGTERM);
+        }
     }
 
     g_logger->log(LOG_DEBUG, "Updated state: apps size {}", m_apps.size());
