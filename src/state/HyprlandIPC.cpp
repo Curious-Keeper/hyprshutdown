@@ -16,7 +16,6 @@
 #include <csignal>
 
 #include <hyprutils/memory/Casts.hpp>
-#include <hyprutils/utils/ScopeGuard.hpp>
 
 using namespace Hyprutils::Memory;
 
@@ -59,8 +58,6 @@ std::expected<std::string, std::string> HyprlandIPC::getFromSocket(const std::st
     if (SERVERSOCKET < 0)
         return std::unexpected("couldn't open a socket (1)");
 
-    auto socketGuard = Hyprutils::Utils::CScopeGuard([&] { close(SERVERSOCKET); });
-
     sockaddr_un serverAddress = {0};
     serverAddress.sun_family  = AF_UNIX;
 
@@ -96,6 +93,8 @@ std::expected<std::string, std::string> HyprlandIPC::getFromSocket(const std::st
         }
         reply += std::string(buffer, sizeWritten);
     }
+
+    close(SERVERSOCKET);
 
     return reply;
 }
