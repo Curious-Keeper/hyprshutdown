@@ -13,19 +13,11 @@
 
 // Critical environment variables that must be preserved through fork
 struct SEnvVars {
-    std::string hyprlandInstanceSignature;
-    std::string xdgRuntimeDir;
     std::string waylandDisplay;
 };
 
 static SEnvVars captureEnvVars() {
     SEnvVars env;
-    const auto HIS = getenv("HYPRLAND_INSTANCE_SIGNATURE");
-    if (HIS)
-        env.hyprlandInstanceSignature = HIS;
-    const auto XDG = getenv("XDG_RUNTIME_DIR");
-    if (XDG)
-        env.xdgRuntimeDir = XDG;
     const auto WAYLAND = getenv("WAYLAND_DISPLAY");
     if (WAYLAND)
         env.waylandDisplay = WAYLAND;
@@ -33,10 +25,6 @@ static SEnvVars captureEnvVars() {
 }
 
 static void restoreEnvVars(const SEnvVars& env) {
-    if (!env.hyprlandInstanceSignature.empty())
-        setenv("HYPRLAND_INSTANCE_SIGNATURE", env.hyprlandInstanceSignature.c_str(), 1);
-    if (!env.xdgRuntimeDir.empty())
-        setenv("XDG_RUNTIME_DIR", env.xdgRuntimeDir.c_str(), 1);
     if (!env.waylandDisplay.empty())
         setenv("WAYLAND_DISPLAY", env.waylandDisplay.c_str(), 1);
 }
